@@ -1,7 +1,7 @@
 {
-  "name": "Catalogue",
-  "short_name": "Catalogue",
-  "start_url": "./Index.html",
+  "name": "Demo by. Leen Corp 2026",
+  "short_name": "Demo by. Leen ",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#14171c",
