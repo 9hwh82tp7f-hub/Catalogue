@@ -1,6 +1,6 @@
 /* Service Worker — catalogue Telegram — V8.0 */
 const CACHE_PREFIX = 'catalogue-cache-';
-const CACHE_NAME = CACHE_PREFIX + 'v10.0-' + "1786619615670";
+const CACHE_NAME = CACHE_PREFIX + 'v10.0-' + "1786619888225";
 const APP_SHELL = ["./index.html", "./manifest.json", './assets/icons/icon-192.png', './assets/icons/icon-512.png'];
 self.addEventListener('install', event => event.waitUntil(
   caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL).catch(() => {})).then(() => self.skipWaiting())
