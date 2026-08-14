@@ -1,6 +1,6 @@
 {
-  "name": "Nom De La Boutique",
-  "short_name": "Nom De La Bout",
+  "name": "Demo by. Leen Corp",
+  "short_name": "Demo by. Leen ",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
