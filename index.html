@@ -110,6 +110,7 @@
   body.visual-3d .card:hover .media{ transform:translateZ(calc(14px * var(--ui-3d))); }
   body.visual-3d .logo-wrap,
   body.visual-3d .tab-btn.active,
+  body.visual-3d .cart-fab,
   body.visual-3d .install-fab{
     transform:translateZ(calc(18px * var(--ui-3d)));
   }
@@ -163,6 +164,7 @@
   .builder-block,
   .compare-bar,
   .cart-panel,
+  .mobile-cart-bar,
   .modal-panel,
   .checkout-summary{
     --local-opacity:var(--ui-surface-opacity);
@@ -173,7 +175,7 @@
   .card,.section-card,.community-card,.support-card,.faq-item,.builder-block{
     background:color-mix(in srgb,var(--surface) var(--ui-card-opacity),transparent);
   }
-  .compare-bar,.cart-panel,.modal-panel,.checkout-summary{
+  .compare-bar,.cart-panel,.mobile-cart-bar,.modal-panel,.checkout-summary{
     background:color-mix(in srgb,var(--surface) var(--ui-modal-opacity),transparent);
   }
   body.visual-soft-edges .card,
@@ -419,7 +421,7 @@
     transform:none;
     z-index:100;
     display:grid;
-    grid-template-columns:repeat(6,minmax(0,1fr));
+    grid-template-columns:repeat(5,minmax(0,1fr));
     width:auto;
     max-width:none;
     padding:7px;
@@ -1377,7 +1379,31 @@
     transition:transform .55s cubic-bezier(.2,.8,.2,1), opacity .55s ease;
   }
 
-
+  /* ---------- BOUTON FLOTTANT PANIER ---------- */
+  .cart-fab{
+    position:fixed;
+    right:16px;
+    bottom:calc(74px + env(safe-area-inset-bottom));
+    z-index:55;
+    width:50px; height:50px;
+    border-radius:50%;
+    background:var(--accent);
+    color:#14171c;
+    border:none;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.4);
+    cursor:pointer;
+    transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .cart-fab svg{ width:22px; height:22px; }
+  .cart-fab:active{ transform:scale(.92); }
+  .cart-fab.bump{ animation:cartFabBump .45s cubic-bezier(.34,1.7,.64,1); }
+  @keyframes cartFabBump{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.22) rotate(-6deg); }
+    70%{ transform:scale(.94) rotate(3deg); }
+    100%{ transform:scale(1) rotate(0); }
+  }
   .cart-badge{
     position:absolute;
     top:-4px; right:-4px;
@@ -2527,65 +2553,88 @@
       margin-bottom:calc(-8px - env(safe-area-inset-bottom,0px));
     }
   }
-  /* ===== V5 UX POLISH — panier intégré à la navigation ===== */
-  .cart-tab{ position:relative; }
-  .cart-tab .cart-badge{
-    position:absolute;
-    top:5px; right:calc(50% - 20px);
-    min-width:18px; height:18px;
-    padding:0 4px;
-    border-radius:999px;
-    background:var(--danger);
-    color:#fff;
-    font-family:'IBM Plex Mono',monospace;
-    font-size:9px; font-weight:800; line-height:18px;
-    display:flex; align-items:center; justify-content:center;
-    border:2px solid var(--surface);
-    pointer-events:none;
-  }
-  .cart-tab .cart-badge.zero{ display:none; }
-  .cart-tab.bump{ animation:cartNavBump .45s cubic-bezier(.34,1.7,.64,1); }
-  @keyframes cartNavBump{
-    0%{transform:scale(1)} 40%{transform:scale(1.1)} 70%{transform:scale(.96)} 100%{transform:scale(1)}
-  }
+  /* ===== V5 UX POLISH — panier mobile non chevauchant ===== */
+  .mobile-cart-bar{ display:none; }
   @media (max-width:720px){
-    body{ padding-bottom:calc(var(--nav-height) + 30px + env(safe-area-inset-bottom,0px)); }
+    /*
+      La navigation principale occupe volontairement la zone basse.
+      Le panier mobile est donc une couche secondaire placée AU-DESSUS de
+      cette navigation, jamais derrière elle. Le FAB desktop est masqué sur
+      mobile afin d'éviter deux accès au panier qui se superposent.
+    */
+    body{ padding-bottom:calc(164px + env(safe-area-inset-bottom,0px)); }
+    .mobile-cart-bar{
+      position:fixed;
+      left:10px;
+      right:10px;
+      bottom:calc(var(--nav-height) + 18px + env(safe-area-inset-bottom,0px));
+      z-index:105;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 10px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:color-mix(in srgb,var(--surface) 96%,transparent);
+      backdrop-filter:blur(18px) saturate(150%);
+      -webkit-backdrop-filter:blur(18px) saturate(150%);
+      box-shadow:0 14px 36px rgba(0,0,0,.32);
+      transform:translateY(calc(100% + 18px));
+      opacity:0;
+      pointer-events:none;
+      transition:transform .22s var(--ease),opacity .22s var(--ease);
+      padding-bottom:calc(9px + env(safe-area-inset-bottom,0px));
+    }
+    .cart-fab{ display:none; }
+    .mobile-cart-bar.show{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .mobile-cart-bar .mcb-info{
+      min-width:0;
+      flex:1;
+      display:grid;
+      gap:2px;
+    }
+    .mobile-cart-bar .mcb-label{
+      font-size:9px;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:var(--ink-dim);
+      font-weight:800;
+    }
+    .mobile-cart-bar .mcb-total{
+      font-family:'Big Shoulders Display',sans-serif;
+      font-size:20px;
+      line-height:1;
+      color:var(--accent);
+      white-space:nowrap;
+    }
+    .mobile-cart-bar button{
+      border:1px solid var(--accent);
+      background:var(--accent);
+      color:var(--bg);
+      border-radius:11px;
+      min-height:42px;
+      padding:9px 14px;
+      font-weight:900;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .mobile-cart-bar .mcb-count{
+      display:inline-flex;
+      min-width:20px;
+      height:20px;
+      align-items:center;
+      justify-content:center;
+      border-radius:999px;
+      background:var(--bg);
+      color:var(--accent);
+      font-size:10px;
+      margin-left:4px;
+    }
+    .search-input{ font-size:16px; }
+    .cart-modal{ max-height:calc(min(92dvh,92svh) - env(safe-area-inset-bottom,0px)); }
   }
-  @media (prefers-reduced-motion:reduce){ .cart-tab.bump{ animation:none; } }
-  /* ===== FINAL NAV FIX — une seule rangée, sans retour à la ligne ===== */
-  nav.tabs{
-    grid-template-columns:repeat(6,minmax(0,1fr));
-    grid-template-rows:1fr;
-    grid-auto-flow:column;
-    overflow:hidden;
-    white-space:nowrap;
-  }
-  nav.tabs .tab-btn{
-    min-width:0;
-    width:100%;
-    flex-shrink:1;
-  }
-  nav.tabs .tab-label{
-    display:block;
-    width:100%;
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    text-align:center;
-  }
-  @media (max-width:600px){
-    nav.tabs{ padding:4px; gap:2px; }
-    nav.tabs .tab-btn{ min-height:52px; padding:7px 1px 6px; gap:3px; }
-    nav.tabs .tab-btn svg{ width:19px; height:19px; }
-    nav.tabs .tab-label{ font-size:7.5px; letter-spacing:0; }
-    .cart-tab .cart-badge{ top:3px; right:calc(50% - 18px); min-width:17px; height:17px; line-height:17px; font-size:8px; }
-  }
-  @media (max-width:380px){
-    nav.tabs{ left:4px; right:4px; padding:3px; gap:1px; }
-    nav.tabs .tab-btn{ min-height:50px; }
-    nav.tabs .tab-btn svg{ width:18px; height:18px; }
-    nav.tabs .tab-label{ font-size:7px; }
+  @media (prefers-reduced-motion:reduce){
+    .mobile-cart-bar{ transition:none!important; }
   }
 
 
@@ -2832,7 +2881,11 @@
   }
   .join-btn:hover{ background:linear-gradient(135deg,var(--accent),var(--accent-dim)); transform:translateY(-2px); box-shadow:0 16px 34px color-mix(in srgb,var(--accent) 30%,transparent); }
 
-
+  .cart-fab{
+    width:54px;height:54px;
+    background:linear-gradient(145deg,var(--accent),color-mix(in srgb,var(--accent) 72%,white));
+    box-shadow:0 14px 34px rgba(0,0,0,.34),0 8px 24px color-mix(in srgb,var(--accent) 25%,transparent);
+  }
   .install-fab{ border-radius:14px; background:color-mix(in srgb,var(--surface) 68%,transparent); border-color:var(--line-soft); backdrop-filter:blur(14px); }
 
   .modal-overlay{ background:color-mix(in srgb,var(--bg) 66%,transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
@@ -2984,13 +3037,12 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 20v-1.6a3.4 3.4 0 0 0-3.4-3.4H8.4A3.4 3.4 0 0 0 5 18.4V20"/><circle cx="11" cy="7.5" r="3.2"/><path d="M19 20v-1.6a3.4 3.4 0 0 0-2.2-3.2"/><path d="M15 4.3a3.2 3.2 0 0 1 0 6.1"/></svg>
     <span class="tab-label">Communauté</span>
   </button>
-  <button class="tab-btn cart-tab" id="cartNavBtn" type="button" aria-label="Ouvrir le panier" data-action="cart">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="21" r="1.3" fill="currentColor" stroke="none"/><circle cx="18" cy="21" r="1.3" fill="currentColor" stroke="none"/><path d="M2.5 3h2.4l2.1 12.1a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21.5 7H6"/></svg>
-    <span class="tab-label">Panier</span>
-    <span class="cart-badge zero" id="cartBadge" aria-label="0 article">0</span>
-  </button>
 </nav>
 
+<button class="cart-fab" id="cartFab" type="button" aria-label="Voir le panier">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1.4" fill="currentColor" stroke="none"/><circle cx="18" cy="21" r="1.4" fill="currentColor" stroke="none"/><path d="M2.5 3h2.4l2.1 12.1a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 2-1.6L21.5 7H6"/></svg>
+  <span class="cart-badge zero" id="cartBadge">0</span>
+</button>
 
 <button class="install-fab" id="installFab" type="button">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
@@ -3162,6 +3214,10 @@
 
 <!-- ================= CHECKOUT ================= -->
 
+<div class="mobile-cart-bar" id="mobileCartBar" aria-hidden="true">
+ <div class="mcb-info"><div class="mcb-label">Votre panier</div><div class="mcb-total" id="mobileCartTotal">0 €</div></div>
+ <button type="button" id="mobileCartOpen">Voir le panier <span class="mcb-count" id="mobileCartCount">0</span></button>
+</div>
 <div class="modal-overlay" id="checkoutOverlay" aria-hidden="true">
   <div class="checkout-modal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
     <div class="checkout-head"><h3 id="checkoutTitle">Finaliser la commande</h3><button type="button" class="checkout-close" id="checkoutClose" aria-label="Fermer">✕</button></div>
@@ -3188,183 +3244,343 @@
    1) CONFIGURATION — remplace toutes les valeurs ci-dessous
    ============================================================ */
 const CONFIG = {
-  theme: "acid-lime", // thème visuel du site : couleurs + design de la barre de navigation.
-  pageBuilder: { enabled:true, blocks: [
-    {id:'hero-1',type:'hero',enabled:true,title:'Bienvenue dans notre univers',text:'Découvre les nouveautés et les produits sélectionnés.',imageUrl:'',buttonText:'Voir le catalogue'},
-    {id:'cats-1',type:'categories',enabled:true,title:'Explorer par catégorie',text:'',limit:8},
-    {id:'products-1',type:'products',enabled:true,title:'Sélection du moment',text:'',limit:4},
-    {id:'stats-1',type:'stats',enabled:true,title:'Le catalogue en un coup d’œil',text:''}
-  ]},
-  analyticsEnabled:true, compareEnabled:true, productSortDefault:'default', shareEnabled:true,
-  notificationEnabled:false, notificationText:'', notificationUntil:'',
-  customTheme: null, // thème créé depuis Theme Studio.
-  // Voir l'objet THEMES plus bas pour la liste complète (16 thèmes disponibles).
-  // Modifiable depuis le panneau d'administration (Général > Apparence).
-  cornerStyle: "modere", // arrondi des coins (cartes, images, boutons) sur tout le site.
-  // Valeurs possibles : "carre" (0px), "modere" (défaut, 4px), "arrondi" (14px), "tres-arrondi" (22px).
-  brandName: "Nom De La Boutique",
-  brandSub: "Commandes traitées via Telegram · Livraison sur demande",
-  eyebrowText: "Catalogue privé", // petit texte au-dessus du nom (écran d'accueil + haut de page)
-  footerText: "Base générée, à personnaliser", // texte affiché à côté de l'année en bas de page
-  bannerUrl: "", // image affichée derrière le titre, en haut de page
-  logoUrl: "", // logo rond affiché au-dessus du titre
-  backgroundUrl: "", // si renseignée, image utilisée comme fond d'écran derrière toute la page
-  splashEnabled: true, // affiche un écran d'animation au chargement du site
-  splashDuration: 1400, // durée minimale d'affichage de l'écran d'animation (ms)
-  copyProtectionEnabled: true, // clic droit / raccourcis de sauvegarde / sélection de texte désactivés
-  pwaEnabled: true, // active le mode application installable (PWA) : icône sur l'écran d'accueil, ouverture en plein écran
-
-  // Réglages visuels avancés — personnalisables depuis l'administration.
-  backgroundOverlayOpacity: 82, // opacité du voile devant l'image de fond, en %
-  backgroundOverlayColor: '', // couleur du voile ; vide = couleur du thème
-  backgroundBlur: 0, // flou appliqué à l'image de fond, en px
-  neonIntensity: 0, // intensité globale du glow néon, en %
-  // Transparence globale des surfaces (0 = totalement transparent, 100 = opaque).
-  uiSurfaceOpacity: 88,
-  uiCardOpacity: 92,
-  uiNavOpacity: 82,
-  uiControlOpacity: 96,
-  uiModalOpacity: 96,
-  uiBorderOpacity: 100,
-  visual3dEnabled: true,
-  visual3dIntensity: 45,
-
-  // Retour au clic sur les boutons et les onglets : léger son + micro-animation.
-  // Activable/désactivable indépendamment depuis le panneau (Général > Interactions).
-  uiSoundEnabled: true,
-  // Style du son de clic, choisi dans la bibliothèque CLICK_SOUNDS (voir plus bas).
-  // Valeurs possibles : "doux" (défaut), "digital", "pop", "cristal", "grave", "clic-sec".
-  uiSoundStyle: "doux",
-  uiAnimationEnabled: true,
-
-  // Frais de livraison ajoutés au total du panier (0 = pas de frais / livraison offerte)
-  cartFeeEnabled: false, // active l'affichage et le calcul des frais dans le panier
-  cartFeeAmount: 0, // montant fixe des frais (dans la devise des prix produits, ex: 4.90)
-  cartFeeLabel: "Frais de livraison", // libellé affiché au-dessus du montant
-  cartFreeShippingThreshold: 0, // si > 0 : livraison offerte à partir de ce montant de sous-total (0 = désactivé)
-  // Modes de livraison configurables depuis le panneau admin.
-  // Le tarif est appliqué uniquement au mode choisi au checkout.
-  deliveryMethods: [
-    { id: "meetup", name: "Meet up", description: "Remise en main propre", enabled: true, price: 0 , minOrder:0},
-    { id: "express", name: "Livraison express", description: "Livraison rapide selon la zone", enabled: true, price: 0 , minOrder:0},
-    { id: "lettre-suivie", name: "Lettre suivie classique", description: "Envoi postal suivi", enabled: true, price: 0 , minOrder:0},
-    { id: "colissimo", name: "Colissimo", description: "Envoi postal Colissimo", enabled: true, price: 0 , minOrder:0},
-    { id: "chronopost", name: "Chronopost", description: "Envoi express Chronopost", enabled: true, price: 0 , minOrder:0},
-    { id: "mondial-relay-locker", name: "Mondial Relay — Locker", description: "Livraison en locker", enabled: true, price: 0 , minOrder:0},
-    { id: "mondial-relay-point", name: "Mondial Relay — Point Relais", description: "Livraison en Point Relais", enabled: true, price: 0 , minOrder:0}
-  ],
-  paymentMethods: [
-    { id: "crypto", name: "Crypto", description: "Paiement en cryptomonnaie", enabled: true, feePercent: 0 },
-    { id: "cash", name: "Espèces", description: "Paiement en espèces", enabled: true },
-    { id: "pcs", name: "Coupon PCS", description: "Coupon prépayé PCS", enabled: true, feePercent: 0 },
-    { id: "paysafecard", name: "Paysafecard", description: "Coupon prépayé Paysafecard", enabled: true, feePercent: 0 }
-  ],
-  catalogueBannerUrl: "", // image affichée en haut de l'onglet Catalogue, au-dessus des fiches produit
-  catalogueBannerTitle: "Produits disponibles",
-  catalogueBannerText: "Touche un produit pour voir le détail, ou « Commander » pour ouvrir Telegram.",
-
-  infosBannerUrl: "", // image affichée en haut de l'onglet Infos
-  infosBannerTitle: "Informations",
-  infosBannerText: "À propos de la boutique, conditions et disponibilité.",
-
-  contactBannerUrl: "", // image affichée en haut de l'onglet Contact
-  contactBannerTitle: "Contact & Support",
-  contactBannerText: "Nos réseaux et tous nos moyens de contact.",
-
-  // Bandeau défilant façon panneau lumineux, sous le titre de la boutique
-  tickerEnabled: true,
-  tickerText: "Message défilant à personnaliser (CONFIG.tickerText) — annonces, promos, infos du moment",
-  tickerSpeed: 45, // vitesse de défilement en pixels/seconde (plus grand = plus rapide)
-
-  homeTitle: "Bienvenue",
-  homeText: "Découvre nos produits, les infos pratiques et notre communauté.",
-  // Média d'accueil : vidéo OU photo, au choix (jamais les deux en même temps).
-  // Si désactivé, ou si aucun fichier n'est renseigné, le bloc est entièrement
-  // masqué et la page d'accueil se réorganise proprement sans espace vide.
-  homeMediaEnabled: true, // active/désactive le média d'accueil
-  homeMediaType: "video", // "video" ou "photo"
-  homeVideoUrl: "", // lien vers un court clip (mp4/webm) qui joue en boucle, sans son
-  homePhotoUrl: "", // lien vers une image affichée à la place de la vidéo (si homeMediaType = "photo")
-
-  // Blocs de l'onglet "Infos" : entièrement gérables depuis le panneau
-  // d'administration (section "Blocs Infos") — activer/désactiver, réordonner,
-  // modifier le titre/icône/contenu, en ajouter ou en supprimer librement.
-  // type "text"  -> bloc de texte libre (titre + contenu)
-  // type "faq"   -> bloc spécial dont le contenu (intro + questions/réponses)
-  // est géré séparément ci-dessous via faqIntro / faqItems.
-  infosBlocks: [
-    { id: "about", type: "text", enabled: true, icon: "info", color: "gold", title: "À propos",
-      text: "Texte de présentation de la boutique : type de produits, zone de livraison, délais, moyens de paiement acceptés, etc." },
-    { id: "payment", type: "text", enabled: true, icon: "card", color: "teal", title: "Conditions & Paiement",
-      text: "Paiement accepté : espèces, virement, crypto (à préciser). Conditions : commande confirmée après paiement, aucun remboursement une fois la commande expédiée." },
-    { id: "availability", type: "text", enabled: true, icon: "truck", color: "gold", title: "Disponibilité",
-      text: "Disponibilité mise à jour régulièrement dans le catalogue. Livraison sur demande, délai moyen à préciser selon la zone." },
-    { id: "faq", type: "faq", enabled: true, icon: "question", color: "teal", title: "FAQ" },
-    { id: "privacy", type: "text", enabled: true, icon: "shield", color: "gold", title: "Confidentialité & Sécurité",
-      text: "Envois discrets, sans mention du contenu sur le colis. Tes informations personnelles ne sont ni revendues ni partagées." },
-    { id: "age", type: "text", enabled: true, icon: "id", color: "teal", title: "Âge & Conditions d'accès",
-      text: "Ce catalogue est réservé aux personnes majeures. Une vérification de l'âge peut être demandée lors de la commande." }
-  ],
-
-  // FAQ détaillée : réduit les questions redondantes en message privé.
-  // Modifie librement les questions/réponses ci-dessous selon ta politique réelle.
-  faqIntro: "Les réponses aux questions les plus fréquentes avant de nous écrire en message privé.",
-  faqItems: [
-    { q: "Quel est le délai de réponse ?", a: "On répond généralement sous 24h. En cas de forte affluence, ça peut prendre un peu plus longtemps — merci de ta patience." },
-    { q: "Comment passer commande ?", a: "Choisis un produit dans le catalogue, sélectionne le grammage/format si besoin, puis clique sur « Commander » : ça ouvre Telegram avec le produit déjà mentionné." },
-    { q: "Quels moyens de paiement sont acceptés ?", a: "Voir la section « Conditions & Paiement » ci-dessus pour le détail des moyens acceptés." },
-    { q: "Puis-je modifier ou annuler ma commande ?", a: "Une modification ou annulation est possible uniquement avant la confirmation/l'expédition. Contacte-nous rapidement via Telegram si besoin." },
-    { q: "Retours et échanges : comment ça marche ?", a: "Contacte le service client sous 48h après réception avec une photo du produit si un problème est constaté. Aucun retour n'est accepté sans contact préalable." },
-    { q: "Les envois sont-ils discrets ?", a: "Oui, tous les colis sont expédiés sans mention du contenu. Voir la section « Confidentialité & Sécurité » pour plus de détails." },
-    { q: "Quel est le délai de livraison ?", a: "Le délai moyen est indiqué dans la section « Disponibilité ». Il peut varier selon la zone et la demande du moment." },
-    { q: "Comment suivre ma commande ?", a: "Une fois la commande confirmée, on te communique les infos de suivi directement sur Telegram." },
-    { q: "Le catalogue est-il réservé aux majeurs ?", a: "Oui, voir la section « Âge & Conditions d'accès » : une vérification peut être demandée à la commande." },
-    { q: "J'ai un souci non couvert ici, que faire ?", a: "Écris-nous directement via les moyens listés dans l'onglet Contact — on te répond au plus vite." }
-  ],
-
-  telegramOrderUsername: "TON_USERNAME_TELEGRAM",
-  telegramChannelUrl: "https://t.me/TON_CANAL",
-  communityText: "Rejoins le canal pour voir les nouveaux arrivages en avant-première, les promos réservées aux membres et les annonces importantes.",
-
-  tatoTalkUrl: "https://tatotalk.com/TON_CANAL",
-  tatoTalkText: "Rejoins également le canal Tato Talk pour rester connecté.",
-  tatoTalkLogoUrl: "", // colle ici l'URL de la vraie icône Tato Talk (image), sinon icône générique affichée
-
-  // Stats affichées dans l'onglet Communauté (modifie ou vide le tableau)
-  stats: [
-    { value: "500+", label: "Membres" },
-    { value: "4.9", label: "Avis" },
-    { value: "24h", label: "Réponse" }
-  ],
-
-  // Étapes "comment ça marche" (onglet Communauté)
-  howItWorks: [
-    { title: "Choisis un produit", desc: "Parcours le catalogue et repère ce qui t'intéresse." },
-    { title: "Commande sur Telegram", desc: "Le bouton ouvre une conversation avec le produit déjà mentionné." },
-    { title: "Confirme et reçois", desc: "On valide les détails ensemble et on organise la livraison." }
-  ],
-
-  socialLinks: [
-    { label: "Instagram", url: "https://instagram.com/TON_COMPTE", icon: "instagram" },
-    { label: "Instagram (backup)", url: "https://instagram.com/TON_COMPTE_BACKUP", icon: "instagram" },
-    { label: "Snapchat",  url: "https://snapchat.com/add/TON_COMPTE", icon: "snapchat" }
-  ],
-
-  // Moyens de contact affichés dans l'onglet Contact (commandes + SAV)
-  contacts: [
+  "theme": "acid-lime",
+  "pageBuilder": {
+    "enabled": false,
+    "blocks": [
+      {
+        "id": "hero-1",
+        "type": "hero",
+        "enabled": true,
+        "title": "Bienvenue dans notre univers",
+        "text": "Découvre les nouveautés et les produits sélectionnés.",
+        "imageUrl": "",
+        "buttonText": "Voir le catalogue"
+      },
+      {
+        "id": "cats-1",
+        "type": "categories",
+        "enabled": true,
+        "title": "Explorer par catégorie",
+        "text": "",
+        "limit": 8
+      },
+      {
+        "id": "products-1",
+        "type": "products",
+        "enabled": true,
+        "title": "Sélection du moment",
+        "text": "",
+        "limit": 4
+      },
+      {
+        "id": "stats-1",
+        "type": "stats",
+        "enabled": true,
+        "title": "Le catalogue en un coup d’œil",
+        "text": ""
+      }
+    ]
+  },
+  "analyticsEnabled": true,
+  "compareEnabled": true,
+  "productSortDefault": "default",
+  "shareEnabled": false,
+  "notificationEnabled": true,
+  "notificationText": "Demo by. Leen Corp 2026",
+  "notificationUntil": "",
+  "customTheme": null,
+  "cornerStyle": "modere",
+  "brandName": "Demo by. Leen Corp 2025",
+  "brandSub": "Bientôt disponible.",
+  "eyebrowText": "Catalogue privé",
+  "footerText": "Demo by. Leen Corp ",
+  "bannerUrl": "assets/media/IMG_0625-1786895174329-9853e4e6d7.jpeg",
+  "logoUrl": "assets/media/IMG_0625-1786895174325-610755fc86.jpeg",
+  "backgroundUrl": "assets/media/IMG_0625-1786895174331-851ef27dc6.jpeg",
+  "splashEnabled": true,
+  "splashDuration": 3000,
+  "copyProtectionEnabled": true,
+  "pwaEnabled": true,
+  "backgroundOverlayOpacity": 82,
+  "backgroundOverlayColor": "",
+  "backgroundBlur": 0,
+  "neonIntensity": 0,
+  "uiSoundEnabled": true,
+  "uiSoundStyle": "pop",
+  "uiAnimationEnabled": true,
+  "cartFeeEnabled": false,
+  "cartFeeAmount": 0,
+  "cartFeeLabel": "Frais de livraison",
+  "cartFreeShippingThreshold": 0,
+  "catalogueBannerUrl": "assets/media/IMG_0623-1786895174336-8b50d870b2.jpeg",
+  "catalogueBannerTitle": "Produits disponibles",
+  "catalogueBannerText": "Touche un produit pour voir le détail, ou « Commander » pour ouvrir Telegram.",
+  "infosBannerUrl": "assets/media/IMG_0623-1786895174339-66ccaaec67.jpeg",
+  "infosBannerTitle": "Informations",
+  "infosBannerText": "À propos de la boutique, conditions et disponibilité.",
+  "contactBannerUrl": "assets/media/IMG_0623-1786895174341-3d34a4bfbe.jpeg",
+  "contactBannerTitle": "Contact & Support",
+  "contactBannerText": "Nos réseaux et tous nos moyens de contact.",
+  "tickerEnabled": true,
+  "tickerText": "En cours de construction 🪚 ",
+  "tickerSpeed": 45,
+  "homeTitle": "Bienvenue",
+  "homeText": "Découvre nos produits, les infos pratiques et notre communauté.",
+  "homeMediaEnabled": true,
+  "homeMediaType": "photo",
+  "homeVideoUrl": "",
+  "homePhotoUrl": "assets/media/IMG_0623-1786895174334-4a475354d0.jpeg",
+  "infosBlocks": [
     {
-      label: "Telegram",
-      url: "https://t.me/TON_USERNAME_TELEGRAM",
-      icon: "telegram",
-      desc: "Pour passer commande directement.",
-      btnLabel: "Commander"
+      "id": "about",
+      "type": "text",
+      "enabled": true,
+      "icon": "info",
+      "color": "gold",
+      "title": "À propos",
+      "text": "Texte de présentation de la boutique : type de produits, zone de livraison, délais, moyens de paiement acceptés, etc."
     },
     {
-      label: "Threema",
-      url: "https://threema.id/TON_ID",
-      icon: "threema",
-      desc: "Service client — en cas de souci majeur avec une commande.",
-      btnLabel: "Contacter"
+      "id": "payment",
+      "type": "text",
+      "enabled": true,
+      "icon": "card",
+      "color": "teal",
+      "title": "Conditions & Paiement",
+      "text": "Paiement accepté : espèces, virement, crypto (à préciser). Conditions : commande confirmée après paiement, aucun remboursement une fois la commande expédiée."
+    },
+    {
+      "id": "availability",
+      "type": "text",
+      "enabled": true,
+      "icon": "truck",
+      "color": "gold",
+      "title": "Disponibilité",
+      "text": "Disponibilité mise à jour régulièrement dans le catalogue. Livraison sur demande, délai moyen à préciser selon la zone."
+    },
+    {
+      "id": "faq",
+      "type": "faq",
+      "enabled": true,
+      "icon": "question",
+      "color": "teal",
+      "title": "FAQ"
+    },
+    {
+      "id": "privacy",
+      "type": "text",
+      "enabled": true,
+      "icon": "shield",
+      "color": "gold",
+      "title": "Confidentialité & Sécurité",
+      "text": "Envois discrets, sans mention du contenu sur le colis. Tes informations personnelles ne sont ni revendues ni partagées."
+    },
+    {
+      "id": "age",
+      "type": "text",
+      "enabled": true,
+      "icon": "id",
+      "color": "teal",
+      "title": "Âge & Conditions d'accès",
+      "text": "Ce catalogue est réservé aux personnes majeures. Une vérification de l'âge peut être demandée lors de la commande."
+    }
+  ],
+  "faqIntro": "Les réponses aux questions les plus fréquentes avant de nous écrire en message privé.",
+  "faqItems": [
+    {
+      "q": "Quel est le délai de réponse ?",
+      "a": "On répond généralement sous 24h. En cas de forte affluence, ça peut prendre un peu plus longtemps — merci de ta patience."
+    },
+    {
+      "q": "Comment passer commande ?",
+      "a": "Choisis un produit dans le catalogue, sélectionne le grammage/format si besoin, puis clique sur « Commander » : ça ouvre Telegram avec le produit déjà mentionné."
+    },
+    {
+      "q": "Quels moyens de paiement sont acceptés ?",
+      "a": "Voir la section « Conditions & Paiement » ci-dessus pour le détail des moyens acceptés."
+    },
+    {
+      "q": "Puis-je modifier ou annuler ma commande ?",
+      "a": "Une modification ou annulation est possible uniquement avant la confirmation/l'expédition. Contacte-nous rapidement via Telegram si besoin."
+    },
+    {
+      "q": "Retours et échanges : comment ça marche ?",
+      "a": "Contacte le service client sous 48h après réception avec une photo du produit si un problème est constaté. Aucun retour n'est accepté sans contact préalable."
+    },
+    {
+      "q": "Les envois sont-ils discrets ?",
+      "a": "Oui, tous les colis sont expédiés sans mention du contenu. Voir la section « Confidentialité & Sécurité » pour plus de détails."
+    },
+    {
+      "q": "Quel est le délai de livraison ?",
+      "a": "Le délai moyen est indiqué dans la section « Disponibilité ». Il peut varier selon la zone et la demande du moment."
+    },
+    {
+      "q": "Comment suivre ma commande ?",
+      "a": "Une fois la commande confirmée, on te communique les infos de suivi directement sur Telegram."
+    },
+    {
+      "q": "Le catalogue est-il réservé aux majeurs ?",
+      "a": "Oui, voir la section « Âge & Conditions d'accès » : une vérification peut être demandée à la commande."
+    },
+    {
+      "q": "J'ai un souci non couvert ici, que faire ?",
+      "a": "Écris-nous directement via les moyens listés dans l'onglet Contact — on te répond au plus vite."
+    }
+  ],
+  "telegramOrderUsername": "vrai59g",
+  "telegramChannelUrl": "https://t.me/TON_CANAL",
+  "communityText": "Rejoins le canal pour voir les nouveaux arrivages en avant-première, les promos réservées aux membres et les annonces importantes.",
+  "tatoTalkUrl": "https://tatotalk.com/TON_CANAL",
+  "tatoTalkText": "Rejoins également le canal Tato Talk pour rester connecté.",
+  "tatoTalkLogoUrl": "assets/media/IMG_0627-1786895174343-897f869bcd.png",
+  "stats": [],
+  "howItWorks": [
+    {
+      "title": "Choisis un produit",
+      "desc": "Parcours le catalogue et repère ce qui t'intéresse."
+    },
+    {
+      "title": "Commande sur Telegram",
+      "desc": "Le bouton ouvre une conversation avec le produit déjà mentionné."
+    },
+    {
+      "title": "Confirme et reçois",
+      "desc": "On valide les détails ensemble et on organise la livraison."
+    }
+  ],
+  "socialLinks": [
+    {
+      "label": "Instagram",
+      "url": "https://instagram.com/TON_COMPTE",
+      "icon": "instagram"
+    },
+    {
+      "label": "Instagram (backup)",
+      "url": "https://instagram.com/TON_COMPTE_BACKUP",
+      "icon": "instagram"
+    },
+    {
+      "label": "Snapchat",
+      "url": "https://snapchat.com/add/TON_COMPTE",
+      "icon": "snapchat"
+    }
+  ],
+  "contacts": [
+    {
+      "label": "Telegram",
+      "url": "https://t.me/vrai59g",
+      "icon": "telegram",
+      "desc": "Pour passer commande directement.",
+      "btnLabel": "Commander"
+    },
+    {
+      "label": "Threema",
+      "url": "https://threema.id/TON_ID",
+      "icon": "threema",
+      "desc": "Service client — en cas de souci majeur avec une commande.",
+      "btnLabel": "Contacter"
+    }
+  ],
+  "schemaVersion": 5,
+  "uiSurfaceOpacity": 88,
+  "uiCardOpacity": 92,
+  "uiNavOpacity": 82,
+  "uiControlOpacity": 96,
+  "uiModalOpacity": 96,
+  "uiBorderOpacity": 100,
+  "visual3dEnabled": true,
+  "visual3dIntensity": 45,
+  "orderHistoryEnabled": true,
+  "promoCodes": [],
+  "maxLocalOrderHistory": 25,
+  "deliveryMethods": [
+    {
+      "id": "meetup",
+      "name": "Meet up",
+      "description": "Remise en main propre",
+      "enabled": true,
+      "price": 0,
+      "minOrder": 50
+    },
+    {
+      "id": "express",
+      "name": "Livraison express",
+      "description": "Livraison rapide selon la zone",
+      "enabled": true,
+      "price": 0,
+      "minOrder": 100
+    },
+    {
+      "id": "lettre-suivie",
+      "name": "Lettre suivie classique",
+      "description": "Envoi postal suivi",
+      "enabled": true,
+      "price": 10,
+      "minOrder": 200
+    },
+    {
+      "id": "colissimo",
+      "name": "Colissimo",
+      "description": "Envoi postal Colissimo",
+      "enabled": true,
+      "price": 15,
+      "minOrder": 200
+    },
+    {
+      "id": "chronopost",
+      "name": "Chronopost",
+      "description": "Envoi express Chronopost",
+      "enabled": true,
+      "price": 40,
+      "minOrder": 200
+    },
+    {
+      "id": "mondial-relay-locker",
+      "name": "Mondial Relay — Locker",
+      "description": "Livraison en locker",
+      "enabled": true,
+      "price": 20,
+      "minOrder": 200
+    },
+    {
+      "id": "mondial-relay-point",
+      "name": "Mondial Relay — Point Relais",
+      "description": "Livraison en Point Relais",
+      "enabled": true,
+      "price": 20,
+      "minOrder": 200
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "crypto",
+      "name": "Crypto",
+      "description": "Paiement en cryptomonnaie",
+      "enabled": true,
+      "feePercent": 7
+    },
+    {
+      "id": "cash",
+      "name": "Espèces",
+      "description": "Paiement en espèces",
+      "enabled": true,
+      "feePercent": 0
+    },
+    {
+      "id": "pcs",
+      "name": "Coupon PCS",
+      "description": "Coupon prépayé PCS",
+      "enabled": true,
+      "feePercent": 7
+    },
+    {
+      "id": "paysafecard",
+      "name": "Paysafecard",
+      "description": "Coupon prépayé Paysafecard",
+      "enabled": true,
+      "feePercent": 7
     }
   ]
 };
@@ -3432,68 +3648,165 @@ if(!Array.isArray(CONFIG.infosBlocks) || !CONFIG.infosBlocks.length){
    ============================================================ */
 const PRODUCTS = [
   {
-    sku: "REF-001",
-    name: "Nom du produit",
-    category: "Catégorie A",
-    inStock: true,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "1g", price: "00 €" },
-      { label: "5g", price: "00 €" },
-      { label: "10g", price: "00 €" },
-      { label: "25g", price: "00 €" },
-      { label: "50g", price: "00 €" },
-      { label: "100g", price: "00 €" }
+    "sku": "REF-001",
+    "name": "Nom du produit",
+    "category": "Catégorie A",
+    "inStock": true,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "1g",
+        "price": "10 €"
+      },
+      {
+        "label": "5g",
+        "price": "40 €"
+      },
+      {
+        "label": "10g",
+        "price": "70 €"
+      },
+      {
+        "label": "25g",
+        "price": "130 €"
+      },
+      {
+        "label": "50g",
+        "price": "250 €"
+      },
+      {
+        "label": "100g",
+        "price": "450 €"
+      }
     ],
-    media: [{ type: "image", url: "" }]
+    "media": [
+      {
+        "type": "video",
+        "url": "assets/media/sample-5s-1786895174353-aabbe33258.mp4",
+        "poster": "assets/media/IMG_0625-1786895174354-410df8ce3a.jpeg"
+      }
+    ],
+    "lowStock": false
   },
   {
-    sku: "REF-002",
-    name: "Nom du produit",
-    category: "Catégorie B",
-    inStock: true,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "3,5g", price: "00 €" },
-      { label: "7g", price: "00 €" },
-      { label: "14g", price: "00 €" },
-      { label: "28g", price: "00 €" },
-      { label: "56g", price: "00 €" },
-      { label: "112g", price: "00 €" }
+    "sku": "REF-002",
+    "name": "Nom du produit",
+    "category": "Catégorie B",
+    "inStock": true,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "3,5g",
+        "price": "00 €"
+      },
+      {
+        "label": "7g",
+        "price": "00 €"
+      },
+      {
+        "label": "14g",
+        "price": "00 €"
+      },
+      {
+        "label": "28g",
+        "price": "00 €"
+      },
+      {
+        "label": "56g",
+        "price": "00 €"
+      },
+      {
+        "label": "112g",
+        "price": "00 €"
+      }
     ],
-    media: [{ type: "video", url: "", poster: "" }]
+    "media": [
+      {
+        "type": "video",
+        "url": ""
+      }
+    ],
+    "lowStock": false
   },
   {
-    sku: "REF-003",
-    name: "Nom du produit",
-    category: "Catégorie A",
-    inStock: false,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "1g", price: "00 €" },
-      { label: "5g", price: "00 €" },
-      { label: "10g", price: "00 €" },
-      { label: "25g", price: "00 €" },
-      { label: "50g", price: "00 €" },
-      { label: "100g", price: "00 €" }
+    "sku": "REF-003",
+    "name": "Nom du produit",
+    "category": "Catégorie A",
+    "inStock": false,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "1g",
+        "price": "00 €"
+      },
+      {
+        "label": "5g",
+        "price": "00 €"
+      },
+      {
+        "label": "10g",
+        "price": "00 €"
+      },
+      {
+        "label": "25g",
+        "price": "00 €"
+      },
+      {
+        "label": "50g",
+        "price": "00 €"
+      },
+      {
+        "label": "100g",
+        "price": "00 €"
+      }
     ],
-    media: [{ type: "image", url: "" }]
+    "media": [
+      {
+        "type": "image",
+        "url": ""
+      }
+    ],
+    "lowStock": false
   },
   {
-    sku: "REF-004",
-    name: "Nom du produit",
-    category: "Catégorie C",
-    inStock: true,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "1g", price: "00 €" },
-      { label: "5g", price: "00 €" },
-      { label: "10g", price: "00 €" },
-      { label: "20g", price: "00 €" },
-      { label: "50g", price: "00 €" },
-      { label: "100g", price: "00 €" }
+    "sku": "REF-004",
+    "name": "Nom du produit",
+    "category": "Catégorie C",
+    "inStock": true,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "1g",
+        "price": "00 €"
+      },
+      {
+        "label": "5g",
+        "price": "00 €"
+      },
+      {
+        "label": "10g",
+        "price": "00 €"
+      },
+      {
+        "label": "20g",
+        "price": "00 €"
+      },
+      {
+        "label": "50g",
+        "price": "00 €"
+      },
+      {
+        "label": "100g",
+        "price": "00 €"
+      }
     ],
-    media: [{ type: "image", url: "" }]
+    "media": [
+      {
+        "type": "image",
+        "url": ""
+      }
+    ],
+    "lowStock": false
   }
 ];
 
@@ -4492,9 +4805,18 @@ function updateCartBadge(animate){
     badge.classList.toggle('zero', count === 0);
     if(animate && count > 0){
       badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
-      const cartNav = document.getElementById('cartNavBtn');
-      cartNav?.classList.remove('bump'); if(cartNav){ void cartNav.offsetWidth; cartNav.classList.add('bump'); }
+      const fab = document.getElementById('cartFab');
+      fab?.classList.remove('bump'); if(fab){ void fab.offsetWidth; fab.classList.add('bump'); }
     }
+  }
+  const bar=document.getElementById('mobileCartBar');
+  const mobileCount=document.getElementById('mobileCartCount');
+  const mobileTotal=document.getElementById('mobileCartTotal');
+  if(bar){bar.classList.toggle('show',count>0);bar.setAttribute('aria-hidden',String(count===0));}
+  if(mobileCount) mobileCount.textContent=count>99?'99+':String(count);
+  if(mobileTotal){
+    const subtotal=cart.reduce((sum,it)=>sum+(parsePriceValue(it.price)*it.qty),0);
+    mobileTotal.textContent=subtotal>0?formatAmount(subtotal,detectCurrencySymbol(cart[0]?.price)):'Sur devis';
   }
 }
 
@@ -4648,9 +4970,9 @@ function renderCart(){
 function triggerAddCartFeedback(triggerEl){
   triggerEl.classList.remove('bump'); void triggerEl.offsetWidth; triggerEl.classList.add('bump');
 
-  const cartNav = document.getElementById('cartNavBtn');
+  const fab = document.getElementById('cartFab');
   const startRect = triggerEl.getBoundingClientRect();
-  const endRect = cartNav ? cartNav.getBoundingClientRect() : startRect;
+  const endRect = fab.getBoundingClientRect();
   const dot = document.createElement('div');
   dot.className = 'fly-dot';
   dot.style.left = (startRect.left + startRect.width/2 - 8) + 'px';
@@ -4695,7 +5017,7 @@ function closeCart(){
   cartOverlay.removeAttribute('aria-labelledby');
   syncOverlayScrollLock();
 }
-document.getElementById('cartNavBtn')?.addEventListener('click', openCart);
+document.getElementById('cartFab').addEventListener('click', openCart);
 document.getElementById('cartClose').addEventListener('click', closeCart);
 /* Le bouton corbeille n'utilise plus window.confirm() : dans le navigateur
    intégré de Telegram (et d'autres WebViews mobiles), les boîtes de dialogue
@@ -4731,6 +5053,7 @@ const checkoutOverlay=document.getElementById('checkoutOverlay');
 document.getElementById('checkoutClose')?.addEventListener('click',closeCheckout);
 document.getElementById('checkoutCancel')?.addEventListener('click',closeCheckout);
 document.getElementById('checkoutSend')?.addEventListener('click',sendCheckoutToTelegram);
+document.getElementById('mobileCartOpen')?.addEventListener('click',()=>openCart());
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
     const checkout=document.getElementById('checkoutOverlay');
@@ -5596,14 +5919,6 @@ function activateTab(tabName, options = {}){
   }
 }
 document.querySelectorAll('.tab-btn').forEach(btn => {
-  const isCart = btn.dataset.action === 'cart';
-  if(isCart){
-    btn.setAttribute('role','button');
-    btn.addEventListener('keydown', e => {
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openCart(); }
-    });
-    return;
-  }
   btn.setAttribute('role','tab');
   btn.setAttribute('aria-controls','panel-' + btn.dataset.tab);
   btn.addEventListener('click', () => {
@@ -5615,7 +5930,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('keydown', e => {
     if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key)) return;
     e.preventDefault();
-    const tabs = [...document.querySelectorAll('.tab-btn')].filter(t => t.dataset.action !== 'cart');
+    const tabs = [...document.querySelectorAll('.tab-btn')];
     const i = tabs.indexOf(btn);
     const next = e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
     tabs[next].focus();
