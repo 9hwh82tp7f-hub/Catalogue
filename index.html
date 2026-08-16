@@ -3208,183 +3208,323 @@
    1) CONFIGURATION — remplace toutes les valeurs ci-dessous
    ============================================================ */
 const CONFIG = {
-  theme: "acid-lime", // thème visuel du site : couleurs + design de la barre de navigation.
-  pageBuilder: { enabled:true, blocks: [
-    {id:'hero-1',type:'hero',enabled:true,title:'Bienvenue dans notre univers',text:'Découvre les nouveautés et les produits sélectionnés.',imageUrl:'',buttonText:'Voir le catalogue'},
-    {id:'cats-1',type:'categories',enabled:true,title:'Explorer par catégorie',text:'',limit:8},
-    {id:'products-1',type:'products',enabled:true,title:'Sélection du moment',text:'',limit:4},
-    {id:'stats-1',type:'stats',enabled:true,title:'Le catalogue en un coup d’œil',text:''}
-  ]},
-  analyticsEnabled:true, compareEnabled:true, productSortDefault:'default', shareEnabled:true,
-  notificationEnabled:false, notificationText:'', notificationUntil:'',
-  customTheme: null, // thème créé depuis Theme Studio.
-  // Voir l'objet THEMES plus bas pour la liste complète (16 thèmes disponibles).
-  // Modifiable depuis le panneau d'administration (Général > Apparence).
-  cornerStyle: "modere", // arrondi des coins (cartes, images, boutons) sur tout le site.
-  // Valeurs possibles : "carre" (0px), "modere" (défaut, 4px), "arrondi" (14px), "tres-arrondi" (22px).
-  brandName: "Nom De La Boutique",
-  brandSub: "Commandes traitées via Telegram · Livraison sur demande",
-  eyebrowText: "Catalogue privé", // petit texte au-dessus du nom (écran d'accueil + haut de page)
-  footerText: "Base générée, à personnaliser", // texte affiché à côté de l'année en bas de page
-  bannerUrl: "", // image affichée derrière le titre, en haut de page
-  logoUrl: "", // logo rond affiché au-dessus du titre
-  backgroundUrl: "", // si renseignée, image utilisée comme fond d'écran derrière toute la page
-  splashEnabled: true, // affiche un écran d'animation au chargement du site
-  splashDuration: 1400, // durée minimale d'affichage de l'écran d'animation (ms)
-  copyProtectionEnabled: true, // clic droit / raccourcis de sauvegarde / sélection de texte désactivés
-  pwaEnabled: true, // active le mode application installable (PWA) : icône sur l'écran d'accueil, ouverture en plein écran
-
-  // Réglages visuels avancés — personnalisables depuis l'administration.
-  backgroundOverlayOpacity: 82, // opacité du voile devant l'image de fond, en %
-  backgroundOverlayColor: '', // couleur du voile ; vide = couleur du thème
-  backgroundBlur: 0, // flou appliqué à l'image de fond, en px
-  neonIntensity: 0, // intensité globale du glow néon, en %
-  // Transparence globale des surfaces (0 = totalement transparent, 100 = opaque).
-  uiSurfaceOpacity: 88,
-  uiCardOpacity: 92,
-  uiNavOpacity: 82,
-  uiControlOpacity: 96,
-  uiModalOpacity: 96,
-  uiBorderOpacity: 100,
-  visual3dEnabled: true,
-  visual3dIntensity: 45,
-
-  // Retour au clic sur les boutons et les onglets : léger son + micro-animation.
-  // Activable/désactivable indépendamment depuis le panneau (Général > Interactions).
-  uiSoundEnabled: true,
-  // Style du son de clic, choisi dans la bibliothèque CLICK_SOUNDS (voir plus bas).
-  // Valeurs possibles : "doux" (défaut), "digital", "pop", "cristal", "grave", "clic-sec".
-  uiSoundStyle: "doux",
-  uiAnimationEnabled: true,
-
-  // Frais de livraison ajoutés au total du panier (0 = pas de frais / livraison offerte)
-  cartFeeEnabled: false, // active l'affichage et le calcul des frais dans le panier
-  cartFeeAmount: 0, // montant fixe des frais (dans la devise des prix produits, ex: 4.90)
-  cartFeeLabel: "Frais de livraison", // libellé affiché au-dessus du montant
-  cartFreeShippingThreshold: 0, // si > 0 : livraison offerte à partir de ce montant de sous-total (0 = désactivé)
-  // Modes de livraison configurables depuis le panneau admin.
-  // Le tarif est appliqué uniquement au mode choisi au checkout.
-  deliveryMethods: [
-    { id: "meetup", name: "Meet up", description: "Remise en main propre", enabled: true, price: 0 , minOrder:0},
-    { id: "express", name: "Livraison express", description: "Livraison rapide selon la zone", enabled: true, price: 0 , minOrder:0},
-    { id: "lettre-suivie", name: "Lettre suivie classique", description: "Envoi postal suivi", enabled: true, price: 0 , minOrder:0},
-    { id: "colissimo", name: "Colissimo", description: "Envoi postal Colissimo", enabled: true, price: 0 , minOrder:0},
-    { id: "chronopost", name: "Chronopost", description: "Envoi express Chronopost", enabled: true, price: 0 , minOrder:0},
-    { id: "mondial-relay-locker", name: "Mondial Relay — Locker", description: "Livraison en locker", enabled: true, price: 0 , minOrder:0},
-    { id: "mondial-relay-point", name: "Mondial Relay — Point Relais", description: "Livraison en Point Relais", enabled: true, price: 0 , minOrder:0}
-  ],
-  paymentMethods: [
-    { id: "crypto", name: "Crypto", description: "Paiement en cryptomonnaie", enabled: true, feePercent: 0 },
-    { id: "cash", name: "Espèces", description: "Paiement en espèces", enabled: true },
-    { id: "pcs", name: "Coupon PCS", description: "Coupon prépayé PCS", enabled: true, feePercent: 0 },
-    { id: "paysafecard", name: "Paysafecard", description: "Coupon prépayé Paysafecard", enabled: true, feePercent: 0 }
-  ],
-  catalogueBannerUrl: "", // image affichée en haut de l'onglet Catalogue, au-dessus des fiches produit
-  catalogueBannerTitle: "Produits disponibles",
-  catalogueBannerText: "Touche un produit pour voir le détail, ou « Commander » pour ouvrir Telegram.",
-
-  infosBannerUrl: "", // image affichée en haut de l'onglet Infos
-  infosBannerTitle: "Informations",
-  infosBannerText: "À propos de la boutique, conditions et disponibilité.",
-
-  contactBannerUrl: "", // image affichée en haut de l'onglet Contact
-  contactBannerTitle: "Contact & Support",
-  contactBannerText: "Nos réseaux et tous nos moyens de contact.",
-
-  // Bandeau défilant façon panneau lumineux, sous le titre de la boutique
-  tickerEnabled: true,
-  tickerText: "Message défilant à personnaliser (CONFIG.tickerText) — annonces, promos, infos du moment",
-  tickerSpeed: 45, // vitesse de défilement en pixels/seconde (plus grand = plus rapide)
-
-  homeTitle: "Bienvenue",
-  homeText: "Découvre nos produits, les infos pratiques et notre communauté.",
-  // Média d'accueil : vidéo OU photo, au choix (jamais les deux en même temps).
-  // Si désactivé, ou si aucun fichier n'est renseigné, le bloc est entièrement
-  // masqué et la page d'accueil se réorganise proprement sans espace vide.
-  homeMediaEnabled: true, // active/désactive le média d'accueil
-  homeMediaType: "video", // "video" ou "photo"
-  homeVideoUrl: "", // lien vers un court clip (mp4/webm) qui joue en boucle, sans son
-  homePhotoUrl: "", // lien vers une image affichée à la place de la vidéo (si homeMediaType = "photo")
-
-  // Blocs de l'onglet "Infos" : entièrement gérables depuis le panneau
-  // d'administration (section "Blocs Infos") — activer/désactiver, réordonner,
-  // modifier le titre/icône/contenu, en ajouter ou en supprimer librement.
-  // type "text"  -> bloc de texte libre (titre + contenu)
-  // type "faq"   -> bloc spécial dont le contenu (intro + questions/réponses)
-  // est géré séparément ci-dessous via faqIntro / faqItems.
-  infosBlocks: [
-    { id: "about", type: "text", enabled: true, icon: "info", color: "gold", title: "À propos",
-      text: "Texte de présentation de la boutique : type de produits, zone de livraison, délais, moyens de paiement acceptés, etc." },
-    { id: "payment", type: "text", enabled: true, icon: "card", color: "teal", title: "Conditions & Paiement",
-      text: "Paiement accepté : espèces, virement, crypto (à préciser). Conditions : commande confirmée après paiement, aucun remboursement une fois la commande expédiée." },
-    { id: "availability", type: "text", enabled: true, icon: "truck", color: "gold", title: "Disponibilité",
-      text: "Disponibilité mise à jour régulièrement dans le catalogue. Livraison sur demande, délai moyen à préciser selon la zone." },
-    { id: "faq", type: "faq", enabled: true, icon: "question", color: "teal", title: "FAQ" },
-    { id: "privacy", type: "text", enabled: true, icon: "shield", color: "gold", title: "Confidentialité & Sécurité",
-      text: "Envois discrets, sans mention du contenu sur le colis. Tes informations personnelles ne sont ni revendues ni partagées." },
-    { id: "age", type: "text", enabled: true, icon: "id", color: "teal", title: "Âge & Conditions d'accès",
-      text: "Ce catalogue est réservé aux personnes majeures. Une vérification de l'âge peut être demandée lors de la commande." }
-  ],
-
-  // FAQ détaillée : réduit les questions redondantes en message privé.
-  // Modifie librement les questions/réponses ci-dessous selon ta politique réelle.
-  faqIntro: "Les réponses aux questions les plus fréquentes avant de nous écrire en message privé.",
-  faqItems: [
-    { q: "Quel est le délai de réponse ?", a: "On répond généralement sous 24h. En cas de forte affluence, ça peut prendre un peu plus longtemps — merci de ta patience." },
-    { q: "Comment passer commande ?", a: "Choisis un produit dans le catalogue, sélectionne le grammage/format si besoin, puis clique sur « Commander » : ça ouvre Telegram avec le produit déjà mentionné." },
-    { q: "Quels moyens de paiement sont acceptés ?", a: "Voir la section « Conditions & Paiement » ci-dessus pour le détail des moyens acceptés." },
-    { q: "Puis-je modifier ou annuler ma commande ?", a: "Une modification ou annulation est possible uniquement avant la confirmation/l'expédition. Contacte-nous rapidement via Telegram si besoin." },
-    { q: "Retours et échanges : comment ça marche ?", a: "Contacte le service client sous 48h après réception avec une photo du produit si un problème est constaté. Aucun retour n'est accepté sans contact préalable." },
-    { q: "Les envois sont-ils discrets ?", a: "Oui, tous les colis sont expédiés sans mention du contenu. Voir la section « Confidentialité & Sécurité » pour plus de détails." },
-    { q: "Quel est le délai de livraison ?", a: "Le délai moyen est indiqué dans la section « Disponibilité ». Il peut varier selon la zone et la demande du moment." },
-    { q: "Comment suivre ma commande ?", a: "Une fois la commande confirmée, on te communique les infos de suivi directement sur Telegram." },
-    { q: "Le catalogue est-il réservé aux majeurs ?", a: "Oui, voir la section « Âge & Conditions d'accès » : une vérification peut être demandée à la commande." },
-    { q: "J'ai un souci non couvert ici, que faire ?", a: "Écris-nous directement via les moyens listés dans l'onglet Contact — on te répond au plus vite." }
-  ],
-
-  telegramOrderUsername: "TON_USERNAME_TELEGRAM",
-  telegramChannelUrl: "https://t.me/TON_CANAL",
-  communityText: "Rejoins le canal pour voir les nouveaux arrivages en avant-première, les promos réservées aux membres et les annonces importantes.",
-
-  tatoTalkUrl: "https://tatotalk.com/TON_CANAL",
-  tatoTalkText: "Rejoins également le canal Tato Talk pour rester connecté.",
-  tatoTalkLogoUrl: "", // colle ici l'URL de la vraie icône Tato Talk (image), sinon icône générique affichée
-
-  // Stats affichées dans l'onglet Communauté (modifie ou vide le tableau)
-  stats: [
-    { value: "500+", label: "Membres" },
-    { value: "4.9", label: "Avis" },
-    { value: "24h", label: "Réponse" }
-  ],
-
-  // Étapes "comment ça marche" (onglet Communauté)
-  howItWorks: [
-    { title: "Choisis un produit", desc: "Parcours le catalogue et repère ce qui t'intéresse." },
-    { title: "Commande sur Telegram", desc: "Le bouton ouvre une conversation avec le produit déjà mentionné." },
-    { title: "Confirme et reçois", desc: "On valide les détails ensemble et on organise la livraison." }
-  ],
-
-  socialLinks: [
-    { label: "Instagram", url: "https://instagram.com/TON_COMPTE", icon: "instagram" },
-    { label: "Instagram (backup)", url: "https://instagram.com/TON_COMPTE_BACKUP", icon: "instagram" },
-    { label: "Snapchat",  url: "https://snapchat.com/add/TON_COMPTE", icon: "snapchat" }
-  ],
-
-  // Moyens de contact affichés dans l'onglet Contact (commandes + SAV)
-  contacts: [
+  "theme": "acid-lime",
+  "pageBuilder": {
+    "enabled": false,
+    "blocks": []
+  },
+  "analyticsEnabled": true,
+  "compareEnabled": true,
+  "productSortDefault": "default",
+  "shareEnabled": false,
+  "notificationEnabled": true,
+  "notificationText": "Demo by Leen Corp ",
+  "notificationUntil": "",
+  "customTheme": null,
+  "cornerStyle": "modere",
+  "brandName": "Nom De La Boutique",
+  "brandSub": "Commandes traitées via Telegram · Livraison sur demande",
+  "eyebrowText": "Catalogue privé",
+  "footerText": "Demo by. Leen Corp ",
+  "bannerUrl": "assets/media/IMG_0625-1786852511962-b4a3c0174b.jpeg",
+  "logoUrl": "assets/media/IMG_0625-1786852511957-6006ede9ac.jpeg",
+  "backgroundUrl": "assets/media/IMG_0625-1786852511964-601e9d49f8.jpeg",
+  "splashEnabled": true,
+  "splashDuration": 3000,
+  "copyProtectionEnabled": true,
+  "pwaEnabled": true,
+  "backgroundOverlayOpacity": 0,
+  "backgroundOverlayColor": "",
+  "backgroundBlur": 0,
+  "neonIntensity": 0,
+  "uiSoundEnabled": true,
+  "uiSoundStyle": "digital",
+  "uiAnimationEnabled": true,
+  "cartFeeEnabled": false,
+  "cartFeeAmount": 0,
+  "cartFeeLabel": "Frais de livraison",
+  "cartFreeShippingThreshold": 0,
+  "catalogueBannerUrl": "assets/media/IMG_0623-1786852511968-63c04aeb91.jpeg",
+  "catalogueBannerTitle": "Produits disponibles",
+  "catalogueBannerText": "Touche un produit pour voir le détail, ou « Commander » pour ouvrir Telegram.",
+  "infosBannerUrl": "assets/media/IMG_0623-1786852511969-f38c409dae.jpeg",
+  "infosBannerTitle": "Informations",
+  "infosBannerText": "À propos de la boutique, conditions et disponibilité.",
+  "contactBannerUrl": "assets/media/IMG_0623-1786852511970-9e94a3b7cd.jpeg",
+  "contactBannerTitle": "Contact & Support",
+  "contactBannerText": "Nos réseaux et tous nos moyens de contact.",
+  "tickerEnabled": true,
+  "tickerText": "Bientôt disponible !",
+  "tickerSpeed": 45,
+  "homeTitle": "Bienvenue",
+  "homeText": "Découvre nos produits, les infos pratiques et notre communauté.",
+  "homeMediaEnabled": true,
+  "homeMediaType": "photo",
+  "homeVideoUrl": "",
+  "homePhotoUrl": "assets/media/IMG_0623-1786852511966-e02af2e66a.jpeg",
+  "infosBlocks": [
     {
-      label: "Telegram",
-      url: "https://t.me/TON_USERNAME_TELEGRAM",
-      icon: "telegram",
-      desc: "Pour passer commande directement.",
-      btnLabel: "Commander"
+      "id": "about",
+      "type": "text",
+      "enabled": true,
+      "icon": "info",
+      "color": "gold",
+      "title": "À propos",
+      "text": "Texte de présentation de la boutique : type de produits, zone de livraison, délais, moyens de paiement acceptés, etc."
     },
     {
-      label: "Threema",
-      url: "https://threema.id/TON_ID",
-      icon: "threema",
-      desc: "Service client — en cas de souci majeur avec une commande.",
-      btnLabel: "Contacter"
+      "id": "payment",
+      "type": "text",
+      "enabled": true,
+      "icon": "card",
+      "color": "teal",
+      "title": "Conditions & Paiement",
+      "text": "Paiement accepté : espèces, virement, crypto (à préciser). Conditions : commande confirmée après paiement, aucun remboursement une fois la commande expédiée."
+    },
+    {
+      "id": "availability",
+      "type": "text",
+      "enabled": true,
+      "icon": "truck",
+      "color": "gold",
+      "title": "Disponibilité",
+      "text": "Disponibilité mise à jour régulièrement dans le catalogue. Livraison sur demande, délai moyen à préciser selon la zone."
+    },
+    {
+      "id": "faq",
+      "type": "faq",
+      "enabled": true,
+      "icon": "question",
+      "color": "teal",
+      "title": "FAQ"
+    },
+    {
+      "id": "privacy",
+      "type": "text",
+      "enabled": true,
+      "icon": "shield",
+      "color": "gold",
+      "title": "Confidentialité & Sécurité",
+      "text": "Envois discrets, sans mention du contenu sur le colis. Tes informations personnelles ne sont ni revendues ni partagées."
+    },
+    {
+      "id": "age",
+      "type": "text",
+      "enabled": true,
+      "icon": "id",
+      "color": "teal",
+      "title": "Âge & Conditions d'accès",
+      "text": "Ce catalogue est réservé aux personnes majeures. Une vérification de l'âge peut être demandée lors de la commande."
+    }
+  ],
+  "faqIntro": "Les réponses aux questions les plus fréquentes avant de nous écrire en message privé.",
+  "faqItems": [
+    {
+      "q": "Quel est le délai de réponse ?",
+      "a": "On répond généralement sous 24h. En cas de forte affluence, ça peut prendre un peu plus longtemps — merci de ta patience."
+    },
+    {
+      "q": "Comment passer commande ?",
+      "a": "Choisis un produit dans le catalogue, sélectionne le grammage/format si besoin, puis clique sur « Commander » : ça ouvre Telegram avec le produit déjà mentionné."
+    },
+    {
+      "q": "Quels moyens de paiement sont acceptés ?",
+      "a": "Voir la section « Conditions & Paiement » ci-dessus pour le détail des moyens acceptés."
+    },
+    {
+      "q": "Puis-je modifier ou annuler ma commande ?",
+      "a": "Une modification ou annulation est possible uniquement avant la confirmation/l'expédition. Contacte-nous rapidement via Telegram si besoin."
+    },
+    {
+      "q": "Retours et échanges : comment ça marche ?",
+      "a": "Contacte le service client sous 48h après réception avec une photo du produit si un problème est constaté. Aucun retour n'est accepté sans contact préalable."
+    },
+    {
+      "q": "Les envois sont-ils discrets ?",
+      "a": "Oui, tous les colis sont expédiés sans mention du contenu. Voir la section « Confidentialité & Sécurité » pour plus de détails."
+    },
+    {
+      "q": "Quel est le délai de livraison ?",
+      "a": "Le délai moyen est indiqué dans la section « Disponibilité ». Il peut varier selon la zone et la demande du moment."
+    },
+    {
+      "q": "Comment suivre ma commande ?",
+      "a": "Une fois la commande confirmée, on te communique les infos de suivi directement sur Telegram."
+    },
+    {
+      "q": "Le catalogue est-il réservé aux majeurs ?",
+      "a": "Oui, voir la section « Âge & Conditions d'accès » : une vérification peut être demandée à la commande."
+    },
+    {
+      "q": "J'ai un souci non couvert ici, que faire ?",
+      "a": "Écris-nous directement via les moyens listés dans l'onglet Contact — on te répond au plus vite."
+    }
+  ],
+  "telegramOrderUsername": "vrai59g",
+  "telegramChannelUrl": "https://t.me/TON_CANAL",
+  "communityText": "Rejoins le canal pour voir les nouveaux arrivages en avant-première, les promos réservées aux membres et les annonces importantes.",
+  "tatoTalkUrl": "https://tatotalk.com/TON_CANAL",
+  "tatoTalkText": "Rejoins également le canal Tato Talk pour rester connecté.",
+  "tatoTalkLogoUrl": "",
+  "stats": [
+    {
+      "value": "500+",
+      "label": "Membres"
+    },
+    {
+      "value": "4.9",
+      "label": "Avis"
+    },
+    {
+      "value": "24h",
+      "label": "Réponse"
+    }
+  ],
+  "howItWorks": [
+    {
+      "title": "Choisis un produit",
+      "desc": "Parcours le catalogue et repère ce qui t'intéresse."
+    },
+    {
+      "title": "Commande sur Telegram",
+      "desc": "Le bouton ouvre une conversation avec le produit déjà mentionné."
+    },
+    {
+      "title": "Confirme et reçois",
+      "desc": "On valide les détails ensemble et on organise la livraison."
+    }
+  ],
+  "socialLinks": [
+    {
+      "label": "Instagram",
+      "url": "https://instagram.com/TON_COMPTE",
+      "icon": "instagram"
+    },
+    {
+      "label": "Instagram (backup)",
+      "url": "https://instagram.com/TON_COMPTE_BACKUP",
+      "icon": "instagram"
+    },
+    {
+      "label": "Snapchat",
+      "url": "https://snapchat.com/add/TON_COMPTE",
+      "icon": "snapchat"
+    }
+  ],
+  "contacts": [
+    {
+      "label": "Telegram",
+      "url": "https://t.me/vrai59g",
+      "icon": "telegram",
+      "desc": "Pour passer commande directement.",
+      "btnLabel": "Commander"
+    },
+    {
+      "label": "Threema",
+      "url": "https://threema.id/TON_ID",
+      "icon": "threema",
+      "desc": "Service client — en cas de souci majeur avec une commande.",
+      "btnLabel": "Contacter"
+    }
+  ],
+  "schemaVersion": 5,
+  "uiSurfaceOpacity": 0,
+  "uiCardOpacity": 0,
+  "uiNavOpacity": 0,
+  "uiControlOpacity": 0,
+  "uiModalOpacity": 0,
+  "uiBorderOpacity": 0,
+  "visual3dEnabled": true,
+  "visual3dIntensity": 45,
+  "orderHistoryEnabled": true,
+  "promoCodes": [],
+  "maxLocalOrderHistory": 25,
+  "deliveryMethods": [
+    {
+      "id": "meetup",
+      "name": "Meet up",
+      "description": "Remise en main propre",
+      "enabled": true,
+      "price": 0,
+      "minOrder": 50
+    },
+    {
+      "id": "express",
+      "name": "Livraison express",
+      "description": "Livraison rapide selon la zone",
+      "enabled": true,
+      "price": 0,
+      "minOrder": 100
+    },
+    {
+      "id": "lettre-suivie",
+      "name": "Lettre suivie classique",
+      "description": "Envoi postal suivi",
+      "enabled": true,
+      "price": 10,
+      "minOrder": 200
+    },
+    {
+      "id": "colissimo",
+      "name": "Colissimo",
+      "description": "Envoi postal Colissimo",
+      "enabled": true,
+      "price": 15,
+      "minOrder": 200
+    },
+    {
+      "id": "chronopost",
+      "name": "Chronopost",
+      "description": "Envoi express Chronopost",
+      "enabled": true,
+      "price": 40,
+      "minOrder": 200
+    },
+    {
+      "id": "mondial-relay-locker",
+      "name": "Mondial Relay — Locker",
+      "description": "Livraison en locker",
+      "enabled": true,
+      "price": 20,
+      "minOrder": 200
+    },
+    {
+      "id": "mondial-relay-point",
+      "name": "Mondial Relay — Point Relais",
+      "description": "Livraison en Point Relais",
+      "enabled": true,
+      "price": 20,
+      "minOrder": 200
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "crypto",
+      "name": "Crypto",
+      "description": "Paiement en cryptomonnaie",
+      "enabled": true,
+      "feePercent": 7
+    },
+    {
+      "id": "cash",
+      "name": "Espèces",
+      "description": "Paiement en espèces",
+      "enabled": true,
+      "feePercent": 0
+    },
+    {
+      "id": "pcs",
+      "name": "Coupon PCS",
+      "description": "Coupon prépayé PCS",
+      "enabled": true,
+      "feePercent": 7
+    },
+    {
+      "id": "paysafecard",
+      "name": "Paysafecard",
+      "description": "Coupon prépayé Paysafecard",
+      "enabled": true,
+      "feePercent": 7
     }
   ]
 };
@@ -3452,68 +3592,165 @@ if(!Array.isArray(CONFIG.infosBlocks) || !CONFIG.infosBlocks.length){
    ============================================================ */
 const PRODUCTS = [
   {
-    sku: "REF-001",
-    name: "Nom du produit",
-    category: "Catégorie A",
-    inStock: true,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "1g", price: "00 €" },
-      { label: "5g", price: "00 €" },
-      { label: "10g", price: "00 €" },
-      { label: "25g", price: "00 €" },
-      { label: "50g", price: "00 €" },
-      { label: "100g", price: "00 €" }
+    "sku": "REF-001",
+    "name": "Nom du produit",
+    "category": "Catégorie A",
+    "inStock": true,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "1g",
+        "price": "10 €"
+      },
+      {
+        "label": "5g",
+        "price": "40 €"
+      },
+      {
+        "label": "10g",
+        "price": "70 €"
+      },
+      {
+        "label": "25g",
+        "price": "130 €"
+      },
+      {
+        "label": "50g",
+        "price": "250 €"
+      },
+      {
+        "label": "100g",
+        "price": "450 €"
+      }
     ],
-    media: [{ type: "image", url: "" }]
+    "media": [
+      {
+        "type": "video",
+        "url": "assets/media/sample-5s-1786852511980-6f904e7397.mp4",
+        "poster": "assets/media/IMG_0625-1786852511981-095d38bebd.jpeg"
+      }
+    ],
+    "lowStock": false
   },
   {
-    sku: "REF-002",
-    name: "Nom du produit",
-    category: "Catégorie B",
-    inStock: true,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "3,5g", price: "00 €" },
-      { label: "7g", price: "00 €" },
-      { label: "14g", price: "00 €" },
-      { label: "28g", price: "00 €" },
-      { label: "56g", price: "00 €" },
-      { label: "112g", price: "00 €" }
+    "sku": "REF-002",
+    "name": "Nom du produit",
+    "category": "Catégorie B",
+    "inStock": true,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "3,5g",
+        "price": "00 €"
+      },
+      {
+        "label": "7g",
+        "price": "00 €"
+      },
+      {
+        "label": "14g",
+        "price": "00 €"
+      },
+      {
+        "label": "28g",
+        "price": "00 €"
+      },
+      {
+        "label": "56g",
+        "price": "00 €"
+      },
+      {
+        "label": "112g",
+        "price": "00 €"
+      }
     ],
-    media: [{ type: "video", url: "", poster: "" }]
+    "media": [
+      {
+        "type": "video",
+        "url": ""
+      }
+    ],
+    "lowStock": false
   },
   {
-    sku: "REF-003",
-    name: "Nom du produit",
-    category: "Catégorie A",
-    inStock: false,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "1g", price: "00 €" },
-      { label: "5g", price: "00 €" },
-      { label: "10g", price: "00 €" },
-      { label: "25g", price: "00 €" },
-      { label: "50g", price: "00 €" },
-      { label: "100g", price: "00 €" }
+    "sku": "REF-003",
+    "name": "Nom du produit",
+    "category": "Catégorie A",
+    "inStock": false,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "1g",
+        "price": "00 €"
+      },
+      {
+        "label": "5g",
+        "price": "00 €"
+      },
+      {
+        "label": "10g",
+        "price": "00 €"
+      },
+      {
+        "label": "25g",
+        "price": "00 €"
+      },
+      {
+        "label": "50g",
+        "price": "00 €"
+      },
+      {
+        "label": "100g",
+        "price": "00 €"
+      }
     ],
-    media: [{ type: "image", url: "" }]
+    "media": [
+      {
+        "type": "image",
+        "url": ""
+      }
+    ],
+    "lowStock": false
   },
   {
-    sku: "REF-004",
-    name: "Nom du produit",
-    category: "Catégorie C",
-    inStock: true,
-    desc: "Description courte du produit : matière, taille, particularité.",
-    prices: [
-      { label: "1g", price: "00 €" },
-      { label: "5g", price: "00 €" },
-      { label: "10g", price: "00 €" },
-      { label: "20g", price: "00 €" },
-      { label: "50g", price: "00 €" },
-      { label: "100g", price: "00 €" }
+    "sku": "REF-004",
+    "name": "Nom du produit",
+    "category": "Catégorie C",
+    "inStock": true,
+    "desc": "Description courte du produit : matière, taille, particularité.",
+    "prices": [
+      {
+        "label": "1g",
+        "price": "00 €"
+      },
+      {
+        "label": "5g",
+        "price": "00 €"
+      },
+      {
+        "label": "10g",
+        "price": "00 €"
+      },
+      {
+        "label": "20g",
+        "price": "00 €"
+      },
+      {
+        "label": "50g",
+        "price": "00 €"
+      },
+      {
+        "label": "100g",
+        "price": "00 €"
+      }
     ],
-    media: [{ type: "image", url: "" }]
+    "media": [
+      {
+        "type": "image",
+        "url": ""
+      }
+    ],
+    "lowStock": false
   }
 ];
 
