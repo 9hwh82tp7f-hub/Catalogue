@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+const index=await readFile(new URL('../index.html',import.meta.url),'utf8');
+const panel=await readFile(new URL('../panel.html',import.meta.url),'utf8');
+assert.match(index,/cryptoAssets/);
+assert.match(index,/checkoutCryptoBlock/);
+assert.match(index,/1\. Mode de livraison/);
+assert.match(index,/Total avant frais de paiement/);
+assert.match(index,/Frais de paiement/);
+assert.match(panel,/Actifs cryptomonnaie/);
+assert.match(panel,/cryptoAssets/);
+console.log('Crypto/payment consistency tests: OK');
+assert.match(index,/Sélectionne BTC, ETH ou USDT/);
+assert.match(panel,/Les trois actifs acceptés sont fixes/);
