@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {Buffer} from 'node:buffer';
+import crypto from 'node:crypto';
+
+const index = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const panel = fs.readFileSync(new URL('../panel.html', import.meta.url), 'utf8');
+const m = panel.match(/const BASE_TEMPLATE_B64 = '([^']+)';/);
+assert.ok(m, 'Template embarqué absent.');
+const embedded = Buffer.from(m[1], 'base64').toString('utf8');
+assert.equal(embedded, index, 'Le template du panel doit être identique à index.html.');
+const sha = crypto.createHash('sha256').update(index).digest('hex');
+const sm = panel.match(/const BASE_TEMPLATE_SHA256 = "([0-9a-f]+)";/);
+assert.ok(sm, 'SHA du template absent.');
+assert.equal(sm[1], sha, 'Le SHA déclaré doit correspondre au template.');
+const cfgStart = index.indexOf('const CONFIG = ');
+const prodStart = index.indexOf('const PRODUCTS = ');
+assert.ok(cfgStart >= 0 && prodStart > cfgStart, 'Blocs CONFIG/PRODUCTS absents.');
+const cfgText = index.slice(cfgStart, prodStart);
+assert.match(cfgText, /secretMode\s*:\s*\{/);
+assert.match(cfgText, /products\s*:\s*\[/);
+assert.match(panel, /function parseSource\(text\)\{[\s\S]*?JSON\.parse\(cfgBlock\.raw\)[\s\S]*?JSON\.parse\(prodBlock\.raw\)[\s\S]*?Function\(/);
+assert.doesNotMatch(panel, /function parseSource\(text\)\{[\s\S]*?const base = JSON\.parse\(b64ToUtf8\(BASE_DATA_B64\)\);[\s\S]*?return \{ cfg: structuredClone\(base\.config\)/);
+console.log('Panel data-source synchronization regression: OK');

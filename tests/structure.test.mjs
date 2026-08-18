@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const files=['assets/admin/app.js','assets/admin/core.js','assets/admin/state.js','assets/admin/schema.js','assets/admin/release.js','assets/admin/release-ui.js'];
+for(const f of files) assert.ok(fs.existsSync(path.join(root,f)),`Fichier admin manquant: ${f}`);
+const panel=fs.readFileSync(path.join(root,'panel.html'),'utf8');
+assert.match(panel,/\.\/assets\/admin\/core\.js/);
+assert.match(panel,/\.\/assets\/admin\/app\.js/);
+assert.match(panel,/\.\/assets\/admin\/release-ui\.js/);
+const runtime=fs.readFileSync(path.join(root,'premium-runtime.js'),'utf8');
+assert.doesNotMatch(runtime,/\bv[456789]-/,'Les classes runtime ne doivent plus porter des numéros de versions historiques.');
+assert.doesNotMatch(runtime,/dataset\.v9Bound/);
+console.log('Project structure tests: OK');
