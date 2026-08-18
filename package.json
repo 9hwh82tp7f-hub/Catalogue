@@ -1,9 +1,0 @@
-{
-  "name": "catalogue-v13",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "sync:panel": "node scripts/sync-panel.mjs",
-    "test": "node --test tests/*.mjs"
-  }
-}
