@@ -1,4 +1,4 @@
-/* Premium Runtime — consolidated visual interaction layer
+/* Premium Runtime — consolidated V10.3
    One runtime for 3D, showroom, UX and performance. */
 (function () {
   'use strict';
@@ -28,7 +28,7 @@
   function performanceTier() {
     const cores = navigator.hardwareConcurrency || 4;
     const memory = navigator.deviceMemory || 4;
-    return cores <= 4 || memory <= 4 ? 'low' : (cores >= 8 && memory >= 8 ? 'ultra' : 'balanced');
+    return cores <= 4 || memory <= 4 ? 'low' : 'balanced';
   }
 
   function applyRuntimeState() {
@@ -43,7 +43,7 @@
     body.classList.toggle('showroom-low', performanceTier() === 'low');
     body.classList.toggle('showroom-balanced', performanceTier() === 'balanced');
     body.classList.toggle('showroom-ultra', performanceTier() === 'ultra');
-    body.classList.toggle('premium-anim-off', reduceMotion.matches);
+    body.classList.toggle('v9-anim-off', reduceMotion.matches);
     root.dataset.viewport = window.matchMedia('(max-width:760px)').matches ? 'mobile' : 'desktop';
   }
 
@@ -70,7 +70,7 @@
     nodes.forEach((el) => {
       if (el.closest('header,nav,footer,form')) return;
 
-      el.classList.add('ui-3d', 'ui-depth-shadow', 'premium-parallax', 'premium-specular', 'premium-card', 'premium-depth-system', 'premium-interactive');
+      el.classList.add('ui-3d', 'ui-depth-shadow', 'v4-parallax', 'v4-specular', 'v6-card', 'v5-depth-system', 'v5-interactive');
 
       if (!el.dataset.premiumBound) {
         el.dataset.premiumBound = '1';
@@ -91,7 +91,7 @@
             `rotateY(${(x * 9 * s).toFixed(2)}deg) ` +
             `translateZ(${(7 * s).toFixed(1)}px)`;
 
-          el.style.setProperty('--premium-spec-x', `${(x * 120 + 20).toFixed(1)}%`);
+          el.style.setProperty('--v4-spec-x', `${(x * 120 + 20).toFixed(1)}%`);
         });
 
         // pointerleave seul ne suffit pas au doigt : sur beaucoup de
@@ -104,31 +104,31 @@
       }
 
       const children = [...el.children];
-      if (children[0]) children[0].classList.add('premium-z-media');
-      if (children[1]) children[1].classList.add('premium-z-text');
-      if (children[2]) children[2].classList.add('premium-z-content');
+      if (children[0]) children[0].classList.add('v5-z-media');
+      if (children[1]) children[1].classList.add('v5-z-text');
+      if (children[2]) children[2].classList.add('v5-z-content');
 
       el.querySelectorAll('img').forEach((img) => {
-        img.classList.add('premium-layer', 'premium-media-optimized');
-        img.style.setProperty('--premium-z', '24px');
+        img.classList.add('v4-layer', 'v9-media-optimized');
+        img.style.setProperty('--v4-z', '24px');
         if (!img.hasAttribute('loading') && !img.closest('header,nav')) img.setAttribute('loading', 'lazy');
         if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
 
-        if (!img.parentElement.classList.contains('premium-media')) {
+        if (!img.parentElement.classList.contains('v6-media')) {
           const wrap = document.createElement('div');
-          wrap.className = 'premium-media';
+          wrap.className = 'v6-media';
           img.parentNode.insertBefore(wrap, img);
           wrap.appendChild(img);
         }
       });
 
       el.querySelectorAll("h1,h2,h3,h4,strong,[class*='title'],[class*='price']").forEach((node, i) => {
-        node.classList.add('premium-layer', 'premium-z-text');
-        node.style.setProperty('--premium-z', `${28 + i * 3}px`);
+        node.classList.add('v4-layer', 'v5-z-text');
+        node.style.setProperty('--v4-z', `${28 + i * 3}px`);
       });
 
       el.querySelectorAll("button,a,[role='button']").forEach((button) => {
-        button.classList.add('premium-cta', 'premium-button');
+        button.classList.add('v5-cta', 'v6-button');
         if (!button.dataset.magneticBound) {
           button.dataset.magneticBound = '1';
           button.addEventListener('pointermove', (event) => {
@@ -155,23 +155,23 @@
     // a rien à suivre, donc on ne le crée pas au tactile. Le champ de
     // particules, lui, flotte tout seul (animation CSS) et reste pertinent
     // sur mobile.
-    if (!coarsePointer.matches && !document.querySelector('.premium-cursor-light')) {
+    if (!coarsePointer.matches && !document.querySelector('.v4-cursor-light')) {
       const light = document.createElement('div');
-      light.className = 'premium-cursor-light';
+      light.className = 'v4-cursor-light';
       document.body.appendChild(light);
     }
 
-    if (!document.querySelector('.premium-particle-field')) {
+    if (!document.querySelector('.v4-particle-field')) {
       const field = document.createElement('div');
-      field.className = 'premium-particle-field';
+      field.className = 'v4-particle-field';
       const count = performanceTier() === 'ultra' ? 18 : 10;
       for (let i = 0; i < count; i++) {
         const particle = document.createElement('i');
-        particle.className = 'premium-particle';
+        particle.className = 'v4-particle';
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.top = `${70 + Math.random() * 40}%`;
-        particle.style.setProperty('--premium-dx', `${Math.random() * 180 - 90}px`);
-        particle.style.setProperty('--premium-duration', `${9 + Math.random() * 10}s`);
+        particle.style.setProperty('--v4-dx', `${Math.random() * 180 - 90}px`);
+        particle.style.setProperty('--v4-duration', `${9 + Math.random() * 10}s`);
         field.appendChild(particle);
       }
       document.body.appendChild(field);
@@ -207,8 +207,8 @@
 
   function setupResponsiveUX() {
     document.querySelectorAll('form').forEach((form) => {
-      if (form.dataset.premiumBound) return;
-      form.dataset.premiumBound = '1';
+      if (form.dataset.v9Bound) return;
+      form.dataset.v9Bound = '1';
       form.addEventListener('submit', () => form.setAttribute('aria-busy', 'true'));
     });
   }
